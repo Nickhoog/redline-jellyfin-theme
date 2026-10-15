@@ -27,10 +27,26 @@ Tested on **Jellyfin 10.11** (web client, desktop and ultrawide).
 
 ## Installation
 
+### Quick install (one line, auto-updates)
+
 1. Open **Dashboard → General → Branding**.
-2. Paste the contents of [`redline.css`](redline.css) into **Custom CSS code**.
-3. Optional: paste [`login-disclaimer.html`](login-disclaimer.html) into **Login disclaimer** and edit the text.
-4. Click **Save** and reload the page with `Ctrl + F5`.
+2. Put this line in **Custom CSS code**:
+
+   ```css
+   @import url("https://cdn.jsdelivr.net/gh/Nickhoog/redline-jellyfin-theme@main/redline.css");
+   ```
+
+3. Click **Save** and reload the page with `Ctrl + F5`.
+
+You automatically get updates to the theme (the CDN can take up to a day to refresh). Any own tweaks go **below** the `@import` line.
+
+### Manual install
+
+Paste the full contents of [`redline.css`](redline.css) into **Custom CSS code** instead. Use this if you want to edit the theme yourself or don't want automatic updates.
+
+### Login disclaimer (optional)
+
+Paste [`login-disclaimer.html`](login-disclaimer.html) into **Login disclaimer** and edit the text.
 
 On TV or phone apps, close the app once completely so the new CSS is loaded.
 
