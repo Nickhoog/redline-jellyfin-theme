@@ -46,7 +46,10 @@ Paste the full contents of [`redline.css`](redline.css) into **Custom CSS code**
 
 ### Login disclaimer (optional)
 
-Paste [`login-disclaimer.html`](login-disclaimer.html) into **Login disclaimer** and edit the text.
+Paste one of these into **Login disclaimer** and edit the text:
+
+- English: [`login-disclaimer-en.html`](login-disclaimer-en.html)
+- Dutch: [`login-disclaimer.html`](login-disclaimer.html)
 
 On TV or phone apps, close the app once completely so the new CSS is loaded.
 
