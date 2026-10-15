@@ -4,13 +4,13 @@ A clean, streaming-style dark theme for Jellyfin. Black and red, with left-align
 
 **Version 1.0.1** · Tested on **Jellyfin 10.11** (web client: desktop, ultrawide, mobile and TV layout).
 
-![Home](screenshots/home.webp)
+![Home](screenshots/home.jpg)
 
-![Movie details](screenshots/details-movie.webp)
+![Movie details](screenshots/details-movie.jpg)
 
 | Episode details | Library |
 |---|---|
-| ![Episode details](screenshots/details-show.webp) | ![Library](screenshots/library.webp) |
+| ![Episode details](screenshots/details-show.jpg) | ![Library](screenshots/library.jpg) |
 
 | Login |
 |---|
