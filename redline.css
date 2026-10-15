@@ -799,3 +799,8 @@ html body .backgroundContainer.withBackdrop {
   top: calc(23vh - 1.5em) !important; width: min(30em, 36vw) !important; height: 15vh !important;
   background-position: left bottom !important;
 }
+
+/* Fix v4.1: labels van invoervelden worden niet meer blauw bij focus; dubbele lijn boven disclaimer weg */
+html body .inputLabelFocused, html body .selectLabelFocused, html body .textareaLabelFocused,
+html body .inputLabel-float.inputLabelFocused { color: #fff !important; }
+#loginPage [class*="isclaimer"] [class*="isclaimer"] { border-top: 0 !important; margin-top: 0 !important; padding-top: 0 !important; }
