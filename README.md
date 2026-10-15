@@ -10,6 +10,10 @@ Tested on **Jellyfin 10.11** (web client, desktop and ultrawide).
 |---|---|
 | ![Details](screenshots/details.jpg) | ![Library](screenshots/library.jpg) |
 
+| Login |
+|---|
+| ![Login](screenshots/login.png) |
+
 ## Features
 
 - Deep black `#141414` with a single red accent `#E50914`
