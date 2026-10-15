@@ -43,3 +43,7 @@ All main colours live in `:root` at the top of `redline.css`:
 --red:  #e50914;  /* accent colour */
 --r-card: 10px;   /* card radius  */
 ```
+
+## License
+
+[MIT](LICENSE) — free to use, modify and share.
