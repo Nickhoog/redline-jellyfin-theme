@@ -2,7 +2,7 @@
 
 A clean, streaming-style dark theme for Jellyfin. Black and red, with left-aligned layouts and quiet hover effects.
 
-**Version 1.0.1** · Tested on **Jellyfin 10.11** (web client: desktop, ultrawide, mobile and TV layout).
+**Version 1.1.0** · Tested on **Jellyfin 10.11** (web client: desktop, ultrawide, mobile and TV layout).
 
 ![Home](screenshots/home.jpg)
 
@@ -28,6 +28,8 @@ A clean, streaming-style dark theme for Jellyfin. Black and red, with left-align
 - Works with video playback (background stays transparent while playing)
 - Mobile: clean detail page without the floating thumbnail, 3 posters per row, no alphabet bar
 - TV layout supported
+- Player: cleaner controls, thin red seek bar that grows on hover, larger buttons
+- Subtitles: white with a soft outline, sized to the picture so they look right on phone, monitor, TV and ultrawide, and kept clear of the control bar
 
 ## Installation
 
@@ -36,10 +38,10 @@ A clean, streaming-style dark theme for Jellyfin. Black and red, with left-align
 1. Open **Dashboard → General → Branding**.
 2. Put one of these lines in **Custom CSS code**:
 
-   Stable version 1.0.1 (recommended, never changes unexpectedly):
+   Stable version 1.1.0 (recommended, never changes unexpectedly):
 
    ```css
-   @import url("https://cdn.jsdelivr.net/gh/Nickhoog/redline-jellyfin-theme@v1.0.1/redline.css");
+   @import url("https://cdn.jsdelivr.net/gh/Nickhoog/redline-jellyfin-theme@v1.1.0/redline.css");
    ```
 
    Always the latest version (auto-updates, the CDN can take up to a day to refresh):
@@ -51,6 +53,8 @@ A clean, streaming-style dark theme for Jellyfin. Black and red, with left-align
 3. Click **Save** and reload the page with `Ctrl + F5`.
 
 Any own tweaks go **below** the `@import` line.
+
+> Note: Redline sets its own subtitle size and style in the web client, so the subtitle size setting in Jellyfin's playback settings has no effect there.
 
 ### Manual install
 
@@ -77,6 +81,7 @@ All main colours live in `:root` at the top of `redline.css`:
 
 ## Changelog
 
+- **1.1.0** — restyled player controls and subtitles (responsive for phone, monitor, TV and ultrawide).
 - **1.0.1** — fixes: dot inside the age rating badge, cut-off audio track name, styled tags as pills.
 - **1.0** — first stable release: cleaned-up CSS, mobile improvements, TV layout tested.
 

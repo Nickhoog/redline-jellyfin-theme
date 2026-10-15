@@ -1,5 +1,5 @@
 /* ============================================================
-   REDLINE — Jellyfin Theme · v1.0.1
+   REDLINE — Jellyfin Theme · v1.1.0
    Streaming look · black & red · clean
    Tested on Jellyfin 10.11 (web: desktop, ultrawide, mobile)
    https://github.com/Nickhoog/redline-jellyfin-theme · MIT
@@ -548,15 +548,100 @@ html body .inputLabel-float.inputLabelFocused { color: #fff !important; }
 /* ────────────────────────────────────────────────────────────
    11. PLAYER
    ──────────────────────────────────────────────────────────── */
-.mdl-slider-background-lower, .iconOsdProgressInner { background: var(--red); }
-.mdl-slider::-webkit-slider-thumb { background: var(--red); }
-.mdl-slider::-moz-range-thumb { background: var(--red); }
-.mdl-slider-background-upper { background: rgba(255,255,255,.25); }
+/* Top bar: title of what's playing */
+.skinHeader-withBackground.osdHeader { background: linear-gradient(180deg, rgba(0,0,0,.85), transparent) !important; }
+.osdHeader .pageTitle {
+  font-size: clamp(1rem, 1.5vw, 1.5rem) !important; font-weight: 700 !important; color: #fff;
+  text-shadow: 0 1px 8px rgba(0,0,0,.8);
+}
+
+/* Bottom bar: deeper gradient, more breathing room */
+.videoOsdBottom.videoOsdBottom-maincontrols {
+  background: linear-gradient(0deg, rgba(0,0,0,.92) 0%, rgba(0,0,0,.6) 50%, transparent 100%) !important;
+  padding: 5em var(--pad) clamp(.6em, 2.2vh, 2em) !important;
+}
+
+/* Times */
+.videoOsdBottom .osdTextContainer, .videoOsdBottom .osdTimeText {
+  font-size: clamp(.85rem, 1vw, 1.05rem); font-weight: 600; color: #e5e5e5; font-variant-numeric: tabular-nums;
+}
+.videoOsdBottom .endsAtText { color: var(--text-dim); font-weight: 500; }
+
+/* Seek bar: thin, grows on hover, red with a round thumb */
+.videoOsdBottom .mdl-slider-background-flex {
+  height: 4px !important; margin-top: -2px !important; border-radius: 99px;
+  transition: height .15s var(--ease), margin .15s var(--ease);
+}
+.videoOsdBottom .sliderContainer:hover .mdl-slider-background-flex { height: 7px !important; margin-top: -3.5px !important; }
+.videoOsdBottom .mdl-slider-background-upper { background: rgba(255,255,255,.28) !important; }
+.mdl-slider-background-lower, .iconOsdProgressInner { background: var(--red) !important; }
+.mdl-slider::-webkit-slider-thumb { background: var(--red) !important; }
+.mdl-slider::-moz-range-thumb { background: var(--red) !important; border: 0; }
+.videoOsdBottom .osdPositionSlider::-webkit-slider-thumb {
+  width: 15px !important; height: 15px !important; border-radius: 50% !important; box-shadow: 0 0 0 4px rgba(229,9,20,.25);
+  transform: scale(.0001); transition: transform .15s var(--ease);
+}
+.videoOsdBottom .sliderContainer:hover .osdPositionSlider::-webkit-slider-thumb { transform: scale(1); }
+.sliderBubble { background: rgba(20,20,20,.95) !important; border: 1px solid var(--line) !important; border-radius: 8px !important; }
+.sliderMarker { background: rgba(255,255,255,.55); width: 2px; }
 progress::-webkit-progress-value { background: var(--red) !important; }
 progress::-moz-progress-bar { background: var(--red) !important; }
 .mdl-spinner__circle { border-color: var(--red); }
-.videoOsdBottom.videoOsdBottom-maincontrols { background: linear-gradient(0deg, rgba(0,0,0,.85), transparent); }
-.skinHeader-withBackground.osdHeader { background: linear-gradient(180deg, rgba(0,0,0,.85), transparent) !important; }
+
+/* Control buttons: white, larger, quiet hover */
+.videoOsdBottom .buttons { gap: .15em; }
+.videoOsdBottom .buttons .paper-icon-button-light {
+  color: #fff; opacity: .88; font-size: clamp(1.05rem, 1.35vw, 1.55rem); padding: .42em; margin: 0;
+  border-radius: 50%; transition: transform .15s var(--ease), opacity .15s, background .15s;
+}
+.videoOsdBottom .buttons .paper-icon-button-light:hover { opacity: 1; transform: scale(1.12); background: rgba(255,255,255,.08) !important; }
+.videoOsdBottom .buttons .paper-icon-button-light:disabled { opacity: .3; transform: none; }
+.videoOsdBottom .buttons .btnPause { font-size: clamp(1.4rem, 1.9vw, 2.1rem); }
+.videoOsdBottom .osdVolumeSliderContainer { width: clamp(5em, 7vw, 9em); }
+
+/* TV remote: clear focus */
+.layout-tv .videoOsdBottom .buttons .paper-icon-button-light:focus { background: #fff !important; color: #000; opacity: 1; transform: scale(1.12); }
+
+/* Phone: bigger touch targets, fewer rarely used buttons */
+.layout-mobile .videoOsdBottom.videoOsdBottom-maincontrols { padding: 3em 4% 1em !important; }
+.layout-mobile .videoOsdBottom .buttons .paper-icon-button-light { font-size: 1.3rem; padding: .5em; }
+.layout-mobile .videoOsdBottom .buttons .btnPause { font-size: 1.7rem; }
+.layout-mobile .videoOsdBottom .btnPreviousChapter, .layout-mobile .videoOsdBottom .btnNextChapter,
+.layout-mobile .videoOsdBottom .btnAirPlay, .layout-mobile .videoOsdBottom .btnPip,
+.layout-mobile .videoOsdBottom .btnRecord { display: none !important; }
+
+/* Subtitles: clean white text with a soft outline instead of a box.
+   Size follows the height of the picture — min(4.2% of screen height, 16:9 picture on a narrow screen) —
+   so it looks right on phone, monitor, TV and ultrawide alike. Overrides the web client's subtitle size setting. */
+html body video.htmlvideoplayer::cue {
+  font-family: var(--font) !important;
+  font-size: clamp(15px, min(4.2vh, 2.36vw), 54px) !important;
+  font-weight: 600 !important;
+  line-height: 1.25 !important;
+  color: #fff !important;
+  background: transparent !important;
+  text-shadow: 0 0 2px #000, 0 0 2px #000, 0 2px 4px rgba(0,0,0,.9), 0 0 14px rgba(0,0,0,.55) !important;
+}
+/* Position: a little higher than default, so lines stay clear of the control bar (Chromium-based browsers) */
+html body video.htmlvideoplayer::-webkit-media-text-track-container { bottom: 4.5vh !important; }
+
+/* Low screens (phone in landscape): compact controls, subtitles a bit higher */
+@media (max-height: 520px) {
+  .videoOsdBottom.videoOsdBottom-maincontrols, .layout-mobile .videoOsdBottom.videoOsdBottom-maincontrols { padding: 2em 3% .3em !important; }
+  .videoOsdBottom .buttons .paper-icon-button-light, .layout-mobile .videoOsdBottom .buttons .paper-icon-button-light { font-size: 1.05rem; padding: .3em; }
+  .videoOsdBottom .buttons .btnPause, .layout-mobile .videoOsdBottom .buttons .btnPause { font-size: 1.35rem; }
+  .videoOsdBottom .osdTextContainer, .videoOsdBottom .osdTimeText { font-size: .78rem; }
+  .osdHeader .pageTitle { font-size: .95rem !important; }
+  .videoOsdBottom .osdVolumeSliderContainer { width: 4.5em; }
+  html body video.htmlvideoplayer::-webkit-media-text-track-container { bottom: 11vh !important; }
+}
+
+/* Phone held upright: the 16:9 picture sits in the middle, show subtitles just below it */
+@media (orientation: portrait) and (max-aspect-ratio: 3/4) {
+  html body video.htmlvideoplayer::-webkit-media-text-track-container { bottom: calc(50vh - 28.125vw - 4.4em) !important; }
+}
+
+/* Skip intro / credits */
 .skip-button, #introSkipperButton, .skipIntroButton {
   background: rgba(20,20,20,.85); color: #fff; border: 1px solid rgba(255,255,255,.6);
   border-radius: var(--r-btn); font-weight: 600;
