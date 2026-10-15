@@ -2,7 +2,7 @@
 
 A clean, streaming-style dark theme for Jellyfin. Black and red, with left-aligned layouts and quiet hover effects.
 
-Tested on **Jellyfin 10.11** (web client, desktop and ultrawide).
+**Version 1.0** · Tested on **Jellyfin 10.11** (web client: desktop, ultrawide, mobile and TV layout).
 
 ![Home](screenshots/home.jpg)
 
@@ -24,13 +24,23 @@ Tested on **Jellyfin 10.11** (web client, desktop and ultrawide).
 - Red progress bars, sliders and accent buttons (no Jellyfin blue left)
 - Glass login card with room for a login disclaimer
 - Works with video playback (background stays transparent while playing)
+- Mobile: clean detail page without the floating thumbnail, 3 posters per row, no alphabet bar
+- TV layout supported
 
 ## Installation
 
-### Quick install (one line, auto-updates)
+### Quick install (one line)
 
 1. Open **Dashboard → General → Branding**.
-2. Put this line in **Custom CSS code**:
+2. Put one of these lines in **Custom CSS code**:
+
+   Stable version 1.0 (recommended, never changes unexpectedly):
+
+   ```css
+   @import url("https://cdn.jsdelivr.net/gh/Nickhoog/redline-jellyfin-theme@v1.0/redline.css");
+   ```
+
+   Always the latest version (auto-updates, the CDN can take up to a day to refresh):
 
    ```css
    @import url("https://cdn.jsdelivr.net/gh/Nickhoog/redline-jellyfin-theme@main/redline.css");
@@ -38,7 +48,7 @@ Tested on **Jellyfin 10.11** (web client, desktop and ultrawide).
 
 3. Click **Save** and reload the page with `Ctrl + F5`.
 
-You automatically get updates to the theme (the CDN can take up to a day to refresh). Any own tweaks go **below** the `@import` line.
+Any own tweaks go **below** the `@import` line.
 
 ### Manual install
 
@@ -62,6 +72,10 @@ All main colours live in `:root` at the top of `redline.css`:
 --red:  #e50914;  /* accent colour */
 --r-card: 10px;   /* card radius  */
 ```
+
+## Changelog
+
+- **1.0** — first stable release: cleaned-up CSS, mobile improvements, TV layout tested.
 
 ## License
 

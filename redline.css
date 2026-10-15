@@ -1,12 +1,12 @@
 /* ============================================================
-   REDLINE — Jellyfin Theme
-   Streaming-look · Zwart & rood · Strak · Desktop / Web / TV / Mobiel
-   Getest op Jellyfin 10.11 (web)
+   REDLINE — Jellyfin Theme · v1.0
+   Streaming look · black & red · clean
+   Tested on Jellyfin 10.11 (web: desktop, ultrawide, mobile)
+   https://github.com/Nickhoog/redline-jellyfin-theme · MIT
    ============================================================ */
 
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap");
 
-/* ── Material Icons (zoals in het oude thema) ── */
 @font-face {
   font-family: "Material Icons Round";
   font-style: normal;
@@ -16,29 +16,27 @@
 }
 
 /* ────────────────────────────────────────────────────────────
-   TOKENS
+   1. TOKENS — change colours and shapes here
    ──────────────────────────────────────────────────────────── */
 :root {
   color-scheme: dark;
 
-  --bg:          #141414;
-  --bg-deep:     #0a0a0a;
-  --surface:     #1f1f1f;
-  --surface-2:   #2a2a2a;
-  --line:        rgba(255,255,255,.10);
-  --red:         #e50914;
-  --red-hover:   #f6121d;
-  --red-dim:     rgba(229,9,20,.18);
-  --text:        #ffffff;
-  --text-dim:    #b3b3b3;
-  --text-faint:  #808080;
+  --bg:         #141414;
+  --surface:    #1f1f1f;
+  --surface-2:  #2a2a2a;
+  --line:       rgba(255,255,255,.10);
+  --red:        #e50914;
+  --red-hover:  #f6121d;
+  --text:       #ffffff;
+  --text-dim:   #b3b3b3;
+  --text-faint: #808080;
 
-  --r-card:  6px;
-  --r-btn:   4px;
+  --r-card:   10px;
+  --r-btn:    4px;
   --r-dialog: 10px;
-  --pad:     4%;
+  --pad:      4%;
   --appBarHeight: 4.5em;
-  --ease:    cubic-bezier(.4,0,.2,1);
+  --ease:     cubic-bezier(.4,0,.2,1);
 
   --font: "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif;
   --iconPack: "Material Icons Round", Material Icons;
@@ -46,9 +44,14 @@
   --loginPageText: "Inloggen";
 }
 
+/* ────────────────────────────────────────────────────────────
+   2. BASE
+   ──────────────────────────────────────────────────────────── */
+/* html carries the colour; body stays transparent so the (fixed, z-index -1) backdrop shows through */
+html { background: var(--bg) !important; }
+html body { background: transparent !important; }
 html, body {
   font-family: var(--font) !important;
-  background: var(--bg) !important;
   color: var(--text);
   -webkit-font-smoothing: antialiased;
   -webkit-tap-highlight-color: transparent !important;
@@ -66,35 +69,51 @@ h1, h2, h3, h4,
   font-variation-settings: "FILL" 1, "wght" 400, "GRAD" 0, "opsz" 48;
 }
 
+a, .itemExternalLinks a { color: inherit; }
 ::selection { background: var(--red); color: #fff; }
 
-/* Dunne, rustige scrollbar */
 * { scrollbar-width: thin; scrollbar-color: #3a3a3a transparent; }
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: #3a3a3a; border-radius: 99px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--red); }
 
+/* Soft page transition */
+@keyframes nfFadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+.page:not(.hide), .itemsContainer { animation: nfFadeIn .35s var(--ease) both; }
+@media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+
 /* ────────────────────────────────────────────────────────────
-   ACHTERGROND
+   3. BACKGROUNDS
    ──────────────────────────────────────────────────────────── */
 .backgroundContainer,
-.backgroundContainer:not(.withBackdrop),
 .backdropContainer,
 .nowPlayingPlaylist,
-.nowPlayingContextMenu {
-  background: var(--bg) !important;
+.nowPlayingContextMenu { background: var(--bg) !important; }
+
+/* Pages without backdrop: soft red glow at the top */
+.backgroundContainer:not(.withBackdrop) {
+  background:
+    radial-gradient(ellipse 80% 40% at 50% -10%, rgba(229,9,20,.14), transparent 70%),
+    linear-gradient(180deg, #181818, #0f0f0f) !important;
 }
 
-.backgroundContainer.withBackdrop {
-  opacity: 1;
-  background: linear-gradient(0deg, var(--bg) 8%, rgba(20,20,20,.55) 45%, rgba(20,20,20,.15)) !important;
+/* Pages with backdrop: dark on the left (text) and at the bottom */
+html body .backgroundContainer.withBackdrop {
+  opacity: 1 !important;
+  background:
+    linear-gradient(90deg, rgba(20,20,20,.97) 0%, rgba(20,20,20,.75) 30%, rgba(20,20,20,.15) 65%, transparent 100%),
+    linear-gradient(0deg, #141414 6%, rgba(20,20,20,.6) 40%, transparent 70%) !important;
 }
-
 .withSectionTabs .backgroundContainer.withBackdrop { background: var(--bg) !important; }
 
+/* Video playback: background must be transparent, otherwise it covers the video */
+html body .backgroundContainer.backgroundContainer-transparent { background: transparent !important; }
+html body:has(.videoPlayerContainer:not(.hide)) { background: #000 !important; }
+#videoOsdPage, .videoOsdPage { animation: none !important; background: transparent !important; }
+
 /* ────────────────────────────────────────────────────────────
-   HEADER — transparant bovenaan, effen zwart na scrollen
+   4. HEADER & TOP NAVIGATION
    ──────────────────────────────────────────────────────────── */
 .skinHeader {
   background: linear-gradient(180deg, rgba(0,0,0,.85), transparent) !important;
@@ -102,23 +121,30 @@ h1, h2, h3, h4,
   backdrop-filter: none !important;
   transition: background .3s var(--ease);
 }
-
 .skinHeader-blurred:not(.osdHeader):not(.semiTransparent) {
   background: rgba(20,20,20,.96) !important;
   backdrop-filter: blur(12px) !important;
   border: 0 !important;
 }
-
 .skinHeader-withBackground.semiTransparent { background: linear-gradient(180deg, rgba(0,0,0,.8), transparent) !important; }
-
 .headerTop { height: var(--appBarHeight); padding: 0 var(--pad); align-items: center; }
 
-.headerButton { color: var(--text); transition: color .2s; }
-.headerButton:hover { color: var(--text-dim) !important; background: transparent !important; }
+.headerLogo, .pageTitleWithLogo { filter: drop-shadow(0 1px 6px rgba(0,0,0,.6)); }
+.headerButton { color: var(--text); border-radius: 50%; transition: color .2s; }
+.headerButton:hover { background: rgba(255,255,255,.08) !important; color: #fff !important; }
+.headerUserButton { background-color: var(--red) !important; border-radius: 50% !important; width: 2.1em; height: 2.1em; border: 0; }
+.headerUserButton .material-icons { color: #fff; }
 
-.headerUserButton { width: 2em; height: 2em; border-radius: var(--r-btn); border: 0; }
+/* MUI app bar (Jellyfin 10.10+) */
+.MuiAppBar-root { background: rgba(20,20,20,.96); border: 0; }
+.MuiAvatar-root.MuiAvatar-colorDefault, .MuiAvatar-circular { background-color: var(--red) !important; color: #fff !important; }
+.MuiAppBar-root .MuiButton-textPrimary, .MuiAppBar-root .MuiButton-colorPrimary { color: #e5e5e5 !important; }
+.MuiAppBar-root .MuiButton-root:hover { color: #fff !important; background: transparent !important; }
+.MuiAppBar-root .MuiButton-root[aria-current="page"], .MuiAppBar-root .MuiButton-root.active { color: #fff !important; box-shadow: inset 0 -2px 0 var(--red); border-radius: 0; }
+.MuiAppBar-root .MuiButton-root .MuiButton-startIcon, .MuiAppBar-root .MuiButton-root svg { color: inherit !important; }
+.MuiIconButton-root { color: #fff; }
 
-/* Bovenste tabs (Home / Favorieten) — onderlijn i.p.v. blokjes */
+/* Section tabs (Home / Favourites …): underline instead of blocks */
 .sectionTabs .emby-tab-button {
   background: transparent !important;
   color: var(--text-dim);
@@ -131,26 +157,21 @@ h1, h2, h3, h4,
   transition: color .2s, border-color .2s;
 }
 .sectionTabs .emby-tab-button:hover { color: var(--text) !important; }
-.sectionTabs .emby-tab-button-active {
-  color: var(--text) !important;
-  font-weight: 700;
-  border-bottom-color: var(--red);
-  background: transparent !important;
-}
+.sectionTabs .emby-tab-button-active { color: var(--text) !important; font-weight: 700; border-bottom-color: var(--red); background: transparent !important; }
 .emby-tabs .emby-button.show-focus:focus { background: transparent !important; outline: none !important; }
-
+.noHomeButtonHeader .emby-tab-button .material-icons, .headerTabs .material-icons { color: inherit; }
+.buttonActive, .emby-tab-button-active .material-icons { color: var(--red) !important; }
 @media (min-width: 75em) {
   .sectionTabs { margin-top: calc(-1 * var(--appBarHeight)); align-self: center; justify-content: center; }
 }
 
 /* ────────────────────────────────────────────────────────────
-   ZIJMENU
+   5. SIDE MENU
    ──────────────────────────────────────────────────────────── */
 .mainDrawer, .drawer-open, .MuiDrawer-paper {
   background: rgba(10,10,10,.98) !important;
   border-right: 1px solid var(--line) !important;
 }
-
 .mainDrawer-scrollContainer > h3 {
   font-size: .72rem !important;
   font-weight: 600 !important;
@@ -159,7 +180,6 @@ h1, h2, h3, h4,
   color: var(--text-faint) !important;
   margin: 1.4em 1.5em .4em !important;
 }
-
 .navMenuOption {
   margin: 2px .75em !important;
   padding: .7em 1em !important;
@@ -172,58 +192,61 @@ h1, h2, h3, h4,
 .navMenuOption .material-icons { color: var(--text-faint) !important; font-size: 1.3rem; }
 .navMenuOption:hover:not(.navMenuOption-selected) { background: var(--surface) !important; color: #fff !important; }
 .navMenuOption:hover .material-icons { color: #fff !important; }
-.navMenuOption-selected, .Mui-selected {
-  background: var(--surface-2) !important;
-  color: #fff !important;
-  box-shadow: inset 3px 0 0 var(--red);
-}
+.navMenuOption-selected, .Mui-selected { background: var(--surface-2) !important; color: #fff !important; box-shadow: inset 3px 0 0 var(--red); }
 .navMenuOption-selected .material-icons { color: var(--red) !important; }
 
 /* ────────────────────────────────────────────────────────────
-   SECTIETITELS
+   6. SECTION TITLES
    ──────────────────────────────────────────────────────────── */
 .sectionTitle, h2.sectionTitle, .sectionTitle-cards {
+  position: relative;
   font-size: 1.3rem !important;
-  font-weight: 600 !important;
-  letter-spacing: 0 !important;
+  font-weight: 700 !important;
+  letter-spacing: -.01em !important;
+  line-height: 1.15 !important;
   text-transform: none !important;
   color: #e5e5e5 !important;
+  border-left: 3px solid var(--red) !important;
+  padding-left: .6em !important;
 }
+.sectionTitle::before, h2.sectionTitle::before, .sectionTitle-cards::before { content: none !important; display: none !important; }
+/* Titles with .padded-left (e.g. "My Media") line up with the cards */
+h2.sectionTitle.padded-left { display: inline-block !important; margin-left: var(--pad) !important; width: auto !important; }
+.sectionTitleContainer, h2.sectionTitle.padded-left { margin-bottom: .6em !important; }
+.verticalSection { margin-bottom: 1.2em; }
 
 .sectionTitleTextButton { transition: color .2s; }
+.sectionTitleTextButton:hover { background: transparent !important; }
 .sectionTitleTextButton .material-icons { color: transparent; transition: transform .25s var(--ease), color .2s; }
 .sectionTitleTextButton:hover .material-icons { color: var(--red) !important; transform: translateX(4px); }
 .sectionTitleTextButton:hover .sectionTitle { color: #fff !important; }
-.sectionTitleTextButton:hover { background: transparent !important; }
 
 /* ────────────────────────────────────────────────────────────
-   KAARTEN — strak, scale-on-hover zoals Netflix
+   7. CARDS
    ──────────────────────────────────────────────────────────── */
+/* Jellyfin's "contain: content" clipped the hover zoom */
+.card, .card-hoverable, .cardBox { contain: none !important; }
+.cardBox { container-type: inline-size; }
+.card-hoverable { position: relative; }
+
 .cardScalable {
   border: 0 !important;
   border-radius: var(--r-card);
   background: var(--surface) !important;
-  box-shadow: none;
+  box-shadow: 0 4px 14px rgba(0,0,0,.45);
   overflow: hidden !important;
+  transform-origin: center top;
   transition: transform .25s var(--ease), box-shadow .25s var(--ease);
 }
-
-.cardImageContainer { transition: transform .4s var(--ease); }
-
-@media (hover: hover) and (pointer: fine) {
-  .card-hoverable:hover { z-index: 5; }
-  .card-hoverable:hover .cardScalable {
-    transform: scale(1.06);
-    box-shadow: 0 10px 28px rgba(0,0,0,.7);
-  }
-  .card-hoverable:hover .cardImageContainer { transform: none; }
-}
+.cardImageContainer { background-size: cover; transition: transform .4s var(--ease); }
+.cardImageIcon { color: #3a3a3a; }
 
 .cardOverlayContainer { background: transparent !important; transition: background .25s; }
 .cardOverlayContainer::after { display: none !important; }
+.cardOverlayContainer, .cardOverlayFab-primary { z-index: 2; }
 .card-hoverable:hover .cardOverlayContainer { background: linear-gradient(0deg, rgba(0,0,0,.55), transparent 60%) !important; }
 
-/* Play-knop op kaart: wit rond, Netflix-stijl */
+/* Play button on cards: white, round */
 .cardOverlayContainer > .cardOverlayFab-primary,
 .listItemImageButton {
   background: rgba(255,255,255,.95) !important;
@@ -235,11 +258,30 @@ h1, h2, h3, h4,
 .cardOverlayContainer > .cardOverlayFab-primary:hover,
 .listItemImageButton:hover { background: #fff !important; transform: scale(1.1); }
 
-.cardText { color: var(--text-dim); font-size: .9em; }
-.cardText-first { color: #e5e5e5; font-weight: 500; }
+/* Card text */
+.cardText { color: var(--text-dim); font-size: .9em; text-align: left !important; }
+.cardTextCentered { text-align: left !important; justify-content: flex-start !important; }
+.cardText-first { font-weight: 600; color: #f1f1f1; margin-top: .35em; }
+.cardText-secondary { font-size: .8em; color: var(--text-faint); }
 .card-hoverable:hover .cardText-first { color: #fff; }
+.card-hoverable .cardText, .card-hoverable .cardFooter { transition: transform .25s var(--ease), color .2s; }
 
-.cardImageIcon { color: #3a3a3a; }
+/* Hover: card grows downwards (never over the row title), text moves along exactly as far.
+   Growth = height × 0.05; height = width × aspect ratio */
+@media (hover: hover) and (pointer: fine) {
+  .card-hoverable:hover { z-index: 10; }
+  .card-hoverable:hover .cardImageContainer { transform: none; }
+  .card-hoverable:hover .cardScalable {
+    transform: scale(1.05);
+    box-shadow: 0 14px 34px rgba(0,0,0,.75), 0 0 0 1px rgba(255,255,255,.14), 0 0 26px rgba(229,9,20,.28);
+  }
+  .card-hoverable:hover .cardText,
+  .card-hoverable:hover .cardFooter { transform: translateY(calc(5cqw + 4px)); }
+  .portraitCard.card-hoverable:hover .cardText, .portraitCard.card-hoverable:hover .cardFooter,
+  .overflowPortraitCard.card-hoverable:hover .cardText, .overflowPortraitCard.card-hoverable:hover .cardFooter { transform: translateY(calc(7.5cqw + 4px)); }
+  .backdropCard.card-hoverable:hover .cardText, .backdropCard.card-hoverable:hover .cardFooter,
+  .overflowBackdropCard.card-hoverable:hover .cardText, .overflowBackdropCard.card-hoverable:hover .cardFooter { transform: translateY(calc(2.82cqw + 4px)); }
+}
 
 .visualCardBox, .paperList {
   background: var(--surface) !important;
@@ -249,24 +291,32 @@ h1, h2, h3, h4,
 }
 .visualCardBox .cardScalable { border-radius: 0 !important; }
 
-/* Voortgangsbalk — Netflix-rood */
+/* Library tiles ("Movies", "Shows") */
+.overflowBackdropCard[data-type="CollectionFolder"] .cardScalable,
+.overflowBackdropCard[data-type="UserView"] .cardScalable { border-radius: 14px; }
+.overflowBackdropCard[data-type="CollectionFolder"] .cardImageContainer::after,
+.overflowBackdropCard[data-type="UserView"] .cardImageContainer::after {
+  content: ""; position: absolute; inset: 0; background: linear-gradient(0deg, rgba(0,0,0,.7), rgba(0,0,0,.15) 60%);
+}
+.overflowBackdropCard[data-type="CollectionFolder"] .cardText-first,
+.overflowBackdropCard[data-type="UserView"] .cardText-first { display: none; }
+
+/* Progress bar & indicators */
 .itemProgressBar:not(.backgroundProgress):not(.playbackProgress):not(.transcodingProgress) {
   height: 3px; background: rgba(255,255,255,.25) !important; border-radius: 0;
 }
 .itemProgressBarForeground { background: var(--red) !important; border-radius: 0; }
-
-/* Indicators */
-.countIndicator, .fullSyncIndicator, .mediaSourceIndicator { background: var(--red); border: 0; }
-.playedIndicator { background: var(--red); border: 0; }
+.countIndicator, .fullSyncIndicator, .mediaSourceIndicator, .playedIndicator { background: var(--red); border: 0; }
 .indicator { border: 0; }
 .videoIndicator { background: rgba(0,0,0,.7); border: 0; }
 
-/* Bibliotheek-kaartjes op home: label uit, zoals voorheen */
-.overflowBackdropCard[data-type="CollectionFolder"] .cardText-first,
-.overflowBackdropCard[data-type="UserView"] .cardText-first { display: none; }
+/* Scroll arrows */
+.emby-scrollbuttons-button { background: rgba(20,20,20,.7) !important; border-radius: 50% !important; color: #fff; transition: background .2s; }
+.emby-scrollbuttons-button .material-icons { color: #fff; }
+.emby-scrollbuttons-button:hover { background: var(--red) !important; }
 
 /* ────────────────────────────────────────────────────────────
-   KAARTAANTALLEN PER SCHERMBREEDTE
+   8. CARD SIZES PER SCREEN WIDTH
    ──────────────────────────────────────────────────────────── */
 .portraitCard { min-width: 5em; }
 .card {
@@ -276,17 +326,15 @@ h1, h2, h3, h4,
   padding: .3em;
   box-sizing: border-box;
 }
-.portraitCard, .squareCard           { --cardCount: 8; }
+.portraitCard, .squareCard                 { --cardCount: 8; }
 .overflowPortraitCard, .overflowSquareCard { --cardCount: 7; }
-.backdropCard                         { --cardCount: 5; }
-.overflowBackdropCard                 { --cardCount: 5; }
-.squareCard:has(.cardFooter)          { --cardCount: 6; }
-.bannerCard                           { --cardCount: 2; }
-
+.backdropCard, .overflowBackdropCard       { --cardCount: 5; }
+.squareCard:has(.cardFooter)               { --cardCount: 6; }
+.bannerCard                                { --cardCount: 2; }
 @media (max-width: 120em) {
-  .portraitCard, .squareCard           { --cardCount: 7; }
+  .portraitCard, .squareCard                 { --cardCount: 7; }
   .overflowPortraitCard, .overflowSquareCard { --cardCount: 6; }
-  .backdropCard, .overflowBackdropCard { --cardCount: 4; }
+  .backdropCard, .overflowBackdropCard       { --cardCount: 4; }
 }
 @media (max-width: 80em) {
   .portraitCard, .squareCard, .overflowPortraitCard, .overflowSquareCard { --cardCount: 5; }
@@ -303,413 +351,95 @@ h1, h2, h3, h4,
 .sectionTitleContainer-cards { padding-left: var(--pad); }
 
 /* ────────────────────────────────────────────────────────────
-   DETAILPAGINA
+   9. DETAIL PAGE — hero with backdrop, everything left-aligned
    ──────────────────────────────────────────────────────────── */
 .itemBackdrop { display: block !important; }
-.layout-desktop .itemBackdrop { height: 62vh; }
+.layout-desktop .itemBackdrop { height: 38vh !important; }
 .layout-mobile .itemBackdrop { height: 42vh; }
+.layout-desktop .detailPageWrapperContainer { background: transparent !important; padding-top: 0; margin-top: 0; min-height: 40vh; }
+.layout-desktop .detailImageContainer { display: none !important; }
 
-.layout-desktop .detailPageWrapperContainer {
-  background: linear-gradient(180deg, transparent, var(--bg) 40vh);
-  padding-top: 0; margin-top: 0; min-height: 40vh;
-}
-
+/* Logo bottom-left in the hero, just above the title */
 .detailLogo { display: block; }
+.layout-desktop .detailLogo {
+  left: var(--pad) !important; right: auto !important; margin: 0 !important; transform: none !important;
+  top: calc(23vh - 1.5em) !important; width: min(30em, 36vw) !important; height: 15vh !important;
+  background-position: left bottom !important;
+}
 .detailLogo:not(.hide) ~ .detailPageWrapperContainer .nameContainer h1 { display: none; }
 .detailLogo.hide ~ .detailPageWrapperContainer .nameContainer h1 { display: block !important; }
 
-.nameContainer > h1.itemName, .nameContainer > h1.parentName {
-  font-size: 3.2em; font-weight: 800; letter-spacing: -.02em; color: #fff;
-}
-.layout-mobile .nameContainer > h1.itemName { font-size: 2em; }
-
+/* Ribbon: title, info and buttons stacked (block: Jellyfin gives it a fixed width / float offset) */
 .detailRibbon { background: transparent; }
-.mediaInfoItem { font-weight: 500; color: var(--text-dim); background: transparent; }
-.mediaInfoOfficialRating { border: 1px solid var(--text-faint); border-radius: 2px; background: transparent !important; color: var(--text-dim); font-size: .8em; }
-.starIcon { color: #f5c518; -webkit-text-fill-color: #f5c518; background: none; }
-.mediaInfoCriticRating::after { content: "%"; }
-
-.detail-clamp-text { color: #d2d2d2; font-size: 1.05em; line-height: 1.5; }
-.layout-desktop .detail-clamp-text { -webkit-line-clamp: 3; }
-
-.itemDetailsGroup, .trackSelections, #childrenContent:has(.listItem[data-type="Audio"]), .programGuideSection {
-  background: var(--surface); border: 0; box-shadow: none !important; border-radius: var(--r-card);
+.layout-desktop .detailRibbon, .layout-tv .detailRibbon { flex-direction: column !important; align-items: flex-start !important; gap: 1.1em; height: auto; min-height: 0; }
+.layout-desktop .detailRibbon {
+  display: block !important; width: auto !important; clear: both;
+  margin-left: 0 !important; margin-top: 0 !important; left: 0 !important; padding-left: var(--pad) !important;
 }
-.detailsGroupItem { border-color: var(--line) !important; }
-.detailsGroupItem > .content { color: var(--text-dim); }
-
-/* Knoppen op detailpagina */
-.btnPlay.detailButton {
-  background: #fff !important;
-  color: #000 !important;
-  border: 0;
-  border-radius: var(--r-btn);
-  height: 2.9em; min-width: 9em;
-  font-weight: 700;
-  transition: background .15s;
-}
-.btnPlay.detailButton:hover { background: rgba(255,255,255,.75) !important; }
-
-.detailButton:not(.btnPlay) {
-  background: rgba(42,42,42,.7); color: #fff;
-  border: 1px solid rgba(255,255,255,.5);
-  border-radius: 50%; padding: .6em !important; margin: .4em !important;
-  transition: border-color .15s, background .15s;
-}
-.detailButton:not(.btnPlay):hover { border-color: #fff; background: rgba(60,60,60,.8); color: #fff; }
-
-/* ────────────────────────────────────────────────────────────
-   LIJSTEN (afleveringen, instellingen)
-   ──────────────────────────────────────────────────────────── */
-.listItem { border-radius: var(--r-card); transition: background .15s; }
-.listItem:hover { background: var(--surface) !important; }
-.listItemBodyText.secondary { color: var(--text-dim); }
-.listItemImage { border: 0; border-radius: var(--r-card); }
-.listItem-border { border-color: var(--line) !important; }
-
-/* ────────────────────────────────────────────────────────────
-   KNOPPEN & FORMULIEREN
-   ──────────────────────────────────────────────────────────── */
-.button-submit, .raised.button-submit {
-  background: var(--red) !important; color: #fff !important; border: 0 !important;
-  border-radius: var(--r-btn); font-weight: 600;
-}
-.button-submit:hover { background: var(--red-hover) !important; }
-
-.button-delete, .btnRevoke, #btnShutdown { background: #8b0000; border: 0; }
-
-.emby-button.block, .button-alt, .raised, .fab {
-  background: var(--surface-2); color: #fff; border: 0; border-radius: var(--r-btn);
-}
-.emby-button:active { transform: scale(.98); }
-.button-flat:hover { background: rgba(255,255,255,.08); color: #fff; }
-.button-link { color: var(--text-dim); }
-.button-link:hover { color: #fff !important; text-decoration: underline; }
-
-.emby-input, .emby-select, .emby-select-withcolor, .emby-textarea {
-  background: #333 !important; border: 1px solid transparent !important;
-  border-radius: var(--r-btn); color: #fff; padding: .7em .9em !important;
-}
-.emby-input:focus, .emby-select:focus, .emby-textarea:focus { border-color: #fff !important; outline: none !important; }
-.emby-select-withcolor > option { background: #222; }
-
-.emby-checkbox:checked + span + .checkboxOutline:not(.multiSelectCheckboxOutline) { background: var(--red); border-color: var(--red); }
-.emby-checkbox:checked + span + .checkboxOutline.multiSelectCheckboxOutline { border: 2px solid var(--red); border-radius: var(--r-card) !important; }
-
-/* Zoekbalk */
-.searchfields-txtSearch { border-radius: var(--r-btn); padding: .75em 1.2em !important; }
-
-/* Sliders / OSD */
-.mdl-slider-background-lower, .iconOsdProgressInner { background: var(--red); }
-.mdl-slider::-webkit-slider-thumb { background: var(--red); }
-.mdl-slider::-moz-range-thumb { background: var(--red); }
-.mdl-slider-background-upper { background: rgba(255,255,255,.25); }
-progress::-webkit-progress-value { background: var(--red) !important; }
-progress::-moz-progress-bar { background: var(--red) !important; }
-.mdl-spinner__circle { border-color: var(--red); }
-
-.videoOsdBottom.videoOsdBottom-maincontrols { background: linear-gradient(0deg, rgba(0,0,0,.85), transparent); }
-.skinHeader-withBackground.osdHeader { background: linear-gradient(180deg, rgba(0,0,0,.85), transparent) !important; }
-.skip-button, #introSkipperButton, .skipIntroButton {
-  background: rgba(20,20,20,.85); color: #fff; border: 1px solid rgba(255,255,255,.6);
-  border-radius: var(--r-btn); font-weight: 600;
-}
-.skip-button:hover, #introSkipperButton:hover, .skipIntroButton:hover { background: #fff; color: #000; }
-
-/* Now playing bar */
-.nowPlayingBar { background: rgba(10,10,10,.97) !important; border-top: 1px solid var(--line) !important; box-shadow: none !important; }
-
-/* ────────────────────────────────────────────────────────────
-   DIALOGEN & MENU'S
-   ──────────────────────────────────────────────────────────── */
-.dialog { background: var(--surface); border: 0; border-radius: var(--r-dialog) !important; }
-.dialogBackdropOpened { opacity: .75; }
-.actionSheetContent { padding: .4em !important; }
-.actionSheetMenuItem { border-radius: var(--r-btn); }
-.actionSheetMenuItem:has(.listItemIcon.check) { background: var(--surface-2); }
-.toast, .upNextContainer { background: var(--surface-2) !important; border: 0 !important; border-radius: var(--r-btn); }
-.infoBanner { background: var(--surface) !important; border: 0 !important; border-radius: var(--r-card) !important; }
-.MuiAppBar-root { background: rgba(20,20,20,.96); border: 0; }
-.MuiList-root.MuiMenu-list { background: var(--surface); }
-.alphaPickerButton { color: var(--text-faint); }
-.alphaPickerButton-selected { color: #fff; }
-
-table:not(.MuiTable-root.MuiTable-stickyHeader) { background: var(--surface); border: 0; border-radius: var(--r-card); }
-fieldset { border: 1px solid var(--line); border-radius: var(--r-card); }
-
-/* ────────────────────────────────────────────────────────────
-   LOGINPAGINA + DISCLAIMER
-   ──────────────────────────────────────────────────────────── */
-.skinHeader.noHomeButtonHeader.semiTransparent { display: none; }
-
-#loginPage {
-  display: flex; justify-content: center; align-items: center;
-  min-height: 100vh; padding: 1.5em; box-sizing: border-box;
-  background:
-    linear-gradient(180deg, rgba(0,0,0,.75), rgba(0,0,0,.45) 40%, rgba(0,0,0,.9)),
-    radial-gradient(ellipse at 50% 0%, rgba(229,9,20,.18), transparent 60%),
-    #000 !important;
-}
-
-#loginPage .padded-left.padded-right.padded-bottom-page {
-  width: 26em; max-width: 100%;
-  background: rgba(0,0,0,.78);
-  padding: 3em 3em 2em !important;
-  border-radius: var(--r-dialog);
-  box-sizing: border-box;
-}
-#loginPage .padded-left.padded-right.padded-bottom-page:has(.visualLoginForm:not(.hide)) { width: 40em; }
-
-.manualLoginForm .sectionTitle, .visualLoginForm > h1 { display: none; }
-.manualLoginForm, .visualLoginForm { position: relative; }
-.manualLoginForm::before, .visualLoginForm::before {
-  content: var(--loginPageText);
-  display: block;
-  font-size: 2rem; font-weight: 800; letter-spacing: -.01em; color: #fff;
-  margin-bottom: 1em;
-}
-
-#loginPage .emby-input { background: #333 !important; }
-#loginPage .button-submit { width: 100%; padding: .9em !important; font-size: 1rem; }
-#divUsers .squareCard { width: 30% !important; }
-.layout-mobile #divUsers .squareCard { width: 45% !important; }
-#txtLoginDisclaimer { resize: none; }
-
-/* De disclaimer zelf (tekst komt uit Dashboard → Algemeen → Branding → Login disclaimer) */
-#loginPage .loginDisclaimer,
-#loginPage .loginDisclaimerContainer,
-#loginPage [class*="isclaimer"] {
-  margin-top: 1.6em;
-  padding-top: 1.2em;
-  border-top: 1px solid var(--line);
-  color: var(--text-faint);
-  font-size: .8rem;
-  line-height: 1.55;
-  text-align: left;
-}
-#loginPage .loginDisclaimer a { color: var(--text-dim); text-decoration: underline; }
-#loginPage .loginDisclaimer a:hover { color: #fff; }
-#loginPage .loginDisclaimer strong { color: var(--text-dim); font-weight: 600; }
-
-/* ────────────────────────────────────────────────────────────
-   MOBIEL
-   ──────────────────────────────────────────────────────────── */
-.layout-mobile .headerButton { width: 40px !important; height: 40px !important; min-width: 40px; margin: 0 2px !important; }
-.layout-mobile .headerButton .material-icons { font-size: 26px !important; }
-.layout-mobile .headerUserButton { width: 34px !important; height: 34px !important; }
-.layout-mobile .cardScalable { border-radius: 4px; }
-.layout-mobile .btnPlay.detailButton { flex: 0 0 100%; margin-right: 0 !important; }
-
-/* TV: geen schaalanimaties */
-.layout-tv .show-focus:focus, .layout-tv .show-animation:focus { transform: none !important; }
-.layout-tv .card:focus .cardScalable { outline: 3px solid #fff; }
-
-/* ============================================================
-   POLISH v2 — mooier: rode accenten, zachtere vormen, diepte
-   ============================================================ */
-
-/* Alle Jellyfin-blauwe accenten → rood */
-.button-accent, .emby-button.button-accent, .button-accent-flat,
-.MuiButton-containedPrimary, .MuiButton-root.MuiButton-containedPrimary {
-  background: var(--red) !important; color: #fff !important; border: 0 !important;
-}
-.button-accent:hover, .MuiButton-containedPrimary:hover { background: var(--red-hover) !important; }
-.button-accent-flat { background: transparent !important; color: var(--red) !important; }
-.headerUserButton { background-color: var(--red) !important; border-radius: 50% !important; width: 2.1em; height: 2.1em; }
-.headerUserButton .material-icons { color: #fff; }
-.buttonActive, .emby-tab-button-active .material-icons { color: var(--red) !important; }
-a, .itemExternalLinks a { color: inherit; }
-.noHomeButtonHeader .emby-tab-button .material-icons, .headerTabs .material-icons { color: inherit; }
-.sectionTabs .emby-tab-button-active { border-bottom-color: var(--red); }
-
-/* Zachte rode gloed bovenaan elke pagina */
-.backgroundContainer:not(.withBackdrop) {
-  background:
-    radial-gradient(ellipse 80% 40% at 50% -10%, rgba(229,9,20,.14), transparent 70%),
-    linear-gradient(180deg, #181818, #0f0f0f) !important;
-}
-
-/* Section-titels: fijn rood streepje */
-.sectionTitle, h2.sectionTitle, .sectionTitle-cards {
-  position: relative; padding-left: .75em !important; font-weight: 700 !important; letter-spacing: -.01em !important;
-}
-.sectionTitle::before, h2.sectionTitle::before, .sectionTitle-cards::before {
-  content: ""; position: absolute; left: 0; top: 18%; bottom: 18%; width: 3px; border-radius: 3px; background: var(--red);
-}
-
-/* Kaarten: iets ronder, diepte, rode glans bij hover */
-:root { --r-card: 10px; }
-.cardScalable { box-shadow: 0 4px 14px rgba(0,0,0,.45); }
-@media (hover: hover) and (pointer: fine) {
-  .card-hoverable:hover .cardScalable {
-    transform: scale(1.07);
-    box-shadow: 0 14px 34px rgba(0,0,0,.75), 0 0 0 1px rgba(255,255,255,.14), 0 0 26px rgba(229,9,20,.28);
-  }
-}
-.cardImageContainer { background-size: cover; }
-.cardText { text-align: left !important; }
-.cardTextCentered { text-align: left !important; justify-content: flex-start !important; }
-.cardText-first { font-weight: 600; color: #f1f1f1; margin-top: .35em; }
-.cardText-secondary { font-size: .8em; color: var(--text-faint); }
-
-/* Bibliotheek-tegels ("Films", "Series") strakker */
-.overflowBackdropCard[data-type="CollectionFolder"] .cardScalable,
-.overflowBackdropCard[data-type="UserView"] .cardScalable { border-radius: 14px; }
-.overflowBackdropCard[data-type="CollectionFolder"] .cardImageContainer::after,
-.overflowBackdropCard[data-type="UserView"] .cardImageContainer::after {
-  content: ""; position: absolute; inset: 0; background: linear-gradient(0deg, rgba(0,0,0,.7), rgba(0,0,0,.15) 60%);
-}
-.cardOverlayContainer, .cardOverlayFab-primary { z-index: 2; }
-
-/* Pijl-knoppen bij scrollers: subtiele ronde knoppen */
-.emby-scrollbuttons-button { background: rgba(20,20,20,.7) !important; border-radius: 50% !important; color: #fff; transition: background .2s; }
-.emby-scrollbuttons-button:hover { background: var(--red) !important; }
-
-/* Header: logo-tekst en iconen netter */
-.headerLogo, .pageTitleWithLogo { filter: drop-shadow(0 1px 6px rgba(0,0,0,.6)); }
-.headerButton { border-radius: 50%; }
-.headerButton:hover { background: rgba(255,255,255,.08) !important; color: #fff !important; }
-
-/* Filter/sorteer-balk in bibliotheek */
-.listTopPaging, .itemsViewSettingsContainer, .paging { gap: .3em; }
-.btnFilter, .btnSort, .btnSelectView { border-radius: 50%; }
-.btnFilter:hover, .btnSort:hover, .btnSelectView:hover { background: rgba(255,255,255,.1); }
-.alphaPickerButton-selected { color: var(--red); font-weight: 700; }
-
-/* Detailpagina: grotere titel met subtiele schaduw, play-knop met ronde Netflix-hoeken */
-.nameContainer > h1.itemName, .nameContainer > h1.parentName { text-shadow: 0 2px 24px rgba(0,0,0,.7); }
-.btnPlay.detailButton { border-radius: 6px; box-shadow: 0 6px 20px rgba(0,0,0,.4); }
-.mediaInfoItem:not(.mediaInfoOfficialRating) { color: #d0d0d0; }
-.mediaInfoOfficialRating { border-color: rgba(255,255,255,.4); }
-
-/* Loginpagina: glas-effect + rode accentlijn */
-#loginPage .padded-left.padded-right.padded-bottom-page {
-  background: rgba(10,10,10,.72);
-  backdrop-filter: blur(18px);
-  border: 1px solid rgba(255,255,255,.08);
-  box-shadow: 0 30px 80px rgba(0,0,0,.7), 0 0 60px rgba(229,9,20,.12);
-  border-top: 2px solid var(--red);
-}
-.manualLoginForm::before, .visualLoginForm::before { font-size: 1.9rem; }
-#loginPage .emby-input:focus { box-shadow: 0 0 0 2px rgba(229,9,20,.5); border-color: transparent !important; }
-
-/* Zachte pagina-overgang */
-@keyframes nfFadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
-.page:not(.hide), .itemsContainer { animation: nfFadeIn .35s var(--ease) both; }
-@media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
-
-/* Fix v2.1: avatar (MUI) rood + titelstreep via border (geen pseudo-element) */
-.MuiAvatar-root.MuiAvatar-colorDefault, .MuiAvatar-circular { background-color: var(--red) !important; color: #fff !important; }
-.sectionTitle::before, h2.sectionTitle::before, .sectionTitle-cards::before { content: none !important; display: none !important; }
-.sectionTitle, h2.sectionTitle, .sectionTitle-cards {
-  border-left: 3px solid var(--red) !important; padding-left: .6em !important; line-height: 1.15 !important;
-}
-.emby-scrollbuttons-button .material-icons, .MuiIconButton-root { color: #fff; }
-
-/* Fix v2.2: titels met .padded-left (zoals "My Media") uitlijnen met de kaarten */
-h2.sectionTitle.padded-left { display: inline-block !important; margin-left: var(--pad) !important; width: auto !important; }
-
-/* Fix v2.3: hover-vergroting werd links/rechts afgeknipt door "contain: content" (paint) op .card */
-.card, .card-hoverable, .cardBox { contain: none !important; }
-.card-hoverable { position: relative; }
-.card-hoverable:hover { z-index: 10; }
-
-/* Fix v2.4: tekst onder de kaart schuift mee naar beneden bij hover-vergroting */
-.card-hoverable .cardText, .card-hoverable .cardFooter { transition: transform .25s var(--ease), color .2s; }
-@media (hover: hover) and (pointer: fine) {
-  .card-hoverable:hover .cardText, .card-hoverable:hover .cardFooter { transform: translateY(.7em); }
-}
-
-/* Fix v2.5: bij brede/grote kaarten (backdrop) schuift de tekst verder omlaag */
-@media (hover: hover) and (pointer: fine) {
-  .backdropCard.card-hoverable:hover .cardText, .backdropCard.card-hoverable:hover .cardFooter,
-  .overflowBackdropCard.card-hoverable:hover .cardText, .overflowBackdropCard.card-hoverable:hover .cardFooter { transform: translateY(1.5em); }
-}
-
-/* Fix v2.6: hover-vergroting naar beneden (niet meer over de titel heen),
-   tekst schuift precies zoveel mee als de kaart groeit (vervangt v2.4/v2.5) */
-.cardBox { container-type: inline-size; }
-.cardScalable { transform-origin: center top; }
-@media (hover: hover) and (pointer: fine) {
-  .card-hoverable:hover .cardScalable { transform: scale(1.05); }
-  /* groei = hoogte x 0.05; hoogte = breedte x beeldverhouding */
-  .card-hoverable:hover .cardText,
-  .card-hoverable:hover .cardFooter { transform: translateY(calc(5cqw + 4px)); }
-  .portraitCard.card-hoverable:hover .cardText, .portraitCard.card-hoverable:hover .cardFooter,
-  .overflowPortraitCard.card-hoverable:hover .cardText, .overflowPortraitCard.card-hoverable:hover .cardFooter { transform: translateY(calc(7.5cqw + 4px)); }
-  .backdropCard.card-hoverable:hover .cardText, .backdropCard.card-hoverable:hover .cardFooter,
-  .overflowBackdropCard.card-hoverable:hover .cardText, .overflowBackdropCard.card-hoverable:hover .cardFooter { transform: translateY(calc(2.82cqw + 4px)); }
-}
-/* Sectietitels: meer lucht tussen titel en kaarten */
-.sectionTitleContainer, h2.sectionTitle.padded-left { margin-bottom: .6em !important; }
-.verticalSection { margin-bottom: 1.2em; }
-
-/* ============================================================
-   v3 — DETAILPAGINA opnieuw (Netflix-stijl, links uitgelijnd)
-   ============================================================ */
-
-/* Actieve link in de bovenbalk: wit met rode onderlijn i.p.v. blauw */
-.MuiAppBar-root .MuiButton-textPrimary, .MuiAppBar-root .MuiButton-colorPrimary { color: #e5e5e5 !important; }
-.MuiAppBar-root .MuiButton-root:hover { color: #fff !important; background: transparent !important; }
-.MuiAppBar-root .MuiButton-root[aria-current="page"], .MuiAppBar-root .MuiButton-root.active { color: #fff !important; box-shadow: inset 0 -2px 0 var(--red); border-radius: 0; }
-.MuiAppBar-root .MuiButton-root .MuiButton-startIcon, .MuiAppBar-root .MuiButton-root svg { color: inherit !important; }
-
-/* Info + knoppen onder elkaar, links uitgelijnd */
-.layout-desktop .detailRibbon, .layout-tv .detailRibbon {
-  flex-direction: column !important; align-items: flex-start !important; gap: 1.1em; height: auto; min-height: 0;
-}
+.layout-desktop .detailRibbon .mainDetailButtons { display: flex !important; margin-top: 1.1em !important; }
+.layout-desktop .detailPagePrimaryContent { padding-left: var(--pad) !important; }
 .infoWrapper { display: block !important; text-align: left !important; padding-left: 0 !important; }
 .nameContainer { align-items: flex-start !important; text-align: left !important; }
 
-/* Afleveringstitel */
+/* Titles */
+.nameContainer > h1.itemName, .nameContainer > h1.parentName {
+  font-size: 3.2em; font-weight: 800; letter-spacing: -.02em; color: #fff; text-shadow: 0 2px 24px rgba(0,0,0,.7);
+}
 .nameContainer > h3.itemName.subtitle, .nameContainer > .subtitle {
   font-size: 1.9em !important; font-weight: 700 !important; letter-spacing: -.015em;
   color: #fff; padding-bottom: .15em !important; margin: 0;
 }
-.layout-mobile .nameContainer > .subtitle { font-size: 1.35em !important; }
+.nameContainer > .subtitle, .nameContainer > h3.itemName {
+  white-space: normal !important; overflow: visible !important; text-overflow: clip !important; padding-left: 0 !important;
+}
+.nameContainer > .subtitle * { font-size: inherit !important; }
 
-/* Meta-regel: rustig grijs, met puntjes ertussen */
+/* Meta line: grey with dots in between */
+.mediaInfoItem { font-weight: 500; background: transparent; }
+.mediaInfoItem:not(.mediaInfoOfficialRating) { color: #d0d0d0; }
+.mediaInfoOfficialRating { border: 1px solid rgba(255,255,255,.4); border-radius: 2px; background: transparent !important; color: var(--text-dim); font-size: .8em; }
+.mediaInfoCriticRating::after { content: "%"; }
+.starIcon { color: #f5c518; -webkit-text-fill-color: #f5c518; background: none; }
 .itemMiscInfo { justify-content: flex-start !important; align-items: center !important; gap: 0; flex-wrap: wrap; }
-.itemMiscInfo .mediaInfoItem { color: #bcbcbc !important; font-weight: 500; margin: 0 !important; padding: 0 !important; }
+.itemMiscInfo .mediaInfoItem { color: #bcbcbc !important; margin: 0 !important; padding: 0 !important; }
 .itemMiscInfo .mediaInfoItem + .mediaInfoItem::before { content: "•"; color: #555; margin: 0 .55em; }
-.itemMiscInfo .mediaInfoOfficialRating + .mediaInfoItem::before { margin-left: .55em; }
 .itemMiscInfo-secondary { margin-top: .25em; }
 
-/* Knoppenrij */
+/* Buttons */
 .mainDetailButtons { justify-content: flex-start !important; align-items: center; gap: .6em; margin: 0 !important; padding: 0 !important; flex-wrap: wrap; }
 .mainDetailButtons .detailButton { margin: 0 !important; }
-
 .btnPlay.detailButton {
   flex-direction: row !important; align-items: center; justify-content: center;
   min-width: 0 !important; height: 2.9em; padding: 0 1.6em 0 1.2em !important;
   background: #fff !important; color: #000 !important; border: 0 !important; border-radius: 6px;
+  box-shadow: 0 6px 20px rgba(0,0,0,.4);
   font-size: 1.05em; font-weight: 700;
+  transition: background .15s;
 }
 .btnPlay.detailButton:hover { background: rgba(255,255,255,.78) !important; }
 .btnPlay.detailButton .detailButton-content { flex-direction: row !important; align-items: center; gap: .4em; }
 .btnPlay.detailButton .detailButton-icon { font-size: 1.6em; color: #000; font-variation-settings: "FILL" 1; }
-.btnPlay.detailButton:not(.formDialogFooterItem)::after {
-  content: attr(title); font-weight: 700; letter-spacing: .01em; padding-left: .45em;
-}
-
+.btnPlay.detailButton:not(.formDialogFooterItem)::after { content: attr(title); font-weight: 700; letter-spacing: .01em; padding-left: .45em; }
 .detailButton:not(.btnPlay) {
   width: 2.9em; height: 2.9em; padding: 0 !important; display: inline-flex; align-items: center; justify-content: center;
-  background: rgba(42,42,42,.6) !important; border: 2px solid rgba(255,255,255,.45) !important; border-radius: 50% !important;
+  color: #fff; background: rgba(42,42,42,.6) !important; border: 2px solid rgba(255,255,255,.45) !important; border-radius: 50% !important;
+  transition: border-color .15s, background .15s;
 }
-.detailButton:not(.btnPlay):hover { border-color: #fff !important; background: rgba(255,255,255,.1) !important; }
+.detailButton:not(.btnPlay):hover { border-color: #fff !important; background: rgba(255,255,255,.1) !important; color: #fff; }
 .detailButton:not(.btnPlay) .detailButton-icon { font-size: 1.35em; }
 .detailButton.btnUserRating .favorite[style*="color"], .btnUserRating.ratingbutton-withrating .detailButton-icon { color: var(--red) !important; }
 
-/* Inhoudsblok: één nette kolom, max. leesbreedte */
+/* Content column */
 #itemDetailPage .detailSection { display: block !important; max-width: 52em !important; }
+.layout-desktop #itemDetailPage .detailSection { max-width: min(52em, 60vw) !important; }
 .detailSectionContent { margin-top: 1.2em; }
 .overview, .detail-clamp-text { color: #e0e0e0 !important; font-size: 1.08em !important; line-height: 1.6 !important; max-width: 65ch; }
 .layout-desktop .detail-clamp-text { -webkit-line-clamp: 4; }
 
-/* Spoorkeuze (Beeld / Geluid / Ondertiteling) */
+/* Track selection (video / audio / subtitles) */
 .trackSelections {
-  background: transparent !important; border: 0 !important; padding: 0 !important; margin: 1.2em 0 0 !important;
-  display: grid !important; gap: .45em; max-width: 34em;
+  background: transparent !important; border: 0 !important; box-shadow: none !important; padding: 0 !important; margin: 1.2em 0 0 !important;
+  border-radius: var(--r-card); display: grid !important; gap: .45em; max-width: 34em;
 }
 .trackSelections .trackSelectionFieldContainer:not(.hide) {
   display: grid !important; grid-template-columns: 8.5em 1fr; align-items: center; margin: 0 !important; max-width: none !important;
@@ -727,7 +457,7 @@ h2.sectionTitle.padded-left { display: inline-block !important; margin-left: var
 .trackSelections .selectArrowContainer { top: 50% !important; transform: translateY(-50%); right: .6em; opacity: .7; }
 .trackSelections .detailTrackSelect:disabled ~ .selectArrowContainer { display: none; }
 
-/* Externe links als pilletjes (komma's verdwijnen) */
+/* External links as pills (commas disappear) */
 .itemExternalLinks { font-size: 0 !important; display: flex !important; flex-wrap: wrap; gap: .5rem; margin: 1.4em 0 !important; }
 .itemExternalLinks > a.button-link {
   font-size: .8rem !important; font-weight: 600; color: #d8d8d8 !important; text-decoration: none !important;
@@ -736,7 +466,7 @@ h2.sectionTitle.padded-left { display: inline-block !important; margin-left: var
 }
 .itemExternalLinks > a.button-link:hover { background: #fff !important; color: #000 !important; border-color: #fff; }
 
-/* Regie / Schrijvers / Genres */
+/* Director / Writers / Genres */
 .itemDetailsGroup {
   background: transparent !important; box-shadow: none !important; border: 0 !important; border-radius: 0;
   border-top: 1px solid var(--line) !important; padding-top: 1em; margin-top: .5em; max-width: 52em;
@@ -745,62 +475,185 @@ h2.sectionTitle.padded-left { display: inline-block !important; margin-left: var
 .itemDetailsGroup .detailsGroupItem > .label {
   color: var(--text-faint) !important; font-size: .78em !important; font-weight: 600 !important; letter-spacing: .08em; text-transform: uppercase;
 }
-.itemDetailsGroup .detailsGroupItem > div, .itemDetailsGroup .detailsGroupItem a {
-  color: #e5e5e5 !important; text-align: left !important; font-weight: 500 !important;
-}
+.itemDetailsGroup .detailsGroupItem > div, .itemDetailsGroup .detailsGroupItem a { color: #e5e5e5 !important; text-align: left !important; font-weight: 500 !important; }
 .itemDetailsGroup .detailsGroupItem a:hover { color: #fff !important; text-decoration: underline !important; }
 
-/* Lege ruimte boven de info wat kleiner als er geen grote achtergrond is */
-.layout-desktop .detailPageWrapperContainer { background: linear-gradient(180deg, transparent, var(--bg) 22vh) !important; }
-
-/* Fix v3.1: ribbon als block (flex week uit voor de zwevende poster) zodat info en knoppen
-   precies boven de rest van de inhoud staan; titel niet meer afkappen */
-.layout-desktop .detailRibbon { display: block !important; }
-.layout-desktop .detailRibbon .mainDetailButtons { display: flex !important; margin-top: 1.1em !important; }
-.nameContainer > .subtitle, .nameContainer > h3.itemName {
-  white-space: normal !important; overflow: visible !important; text-overflow: clip !important; padding-left: 0 !important;
+#childrenContent:has(.listItem[data-type="Audio"]), .programGuideSection {
+  background: var(--surface); border: 0; box-shadow: none !important; border-radius: var(--r-card);
 }
 
-/* Fix v3.2: Jellyfin geeft de ribbon een vaste breedte (rechts uitgelijnd); terug naar volle breedte */
-.layout-desktop .detailRibbon { width: auto !important; margin-left: 0 !important; left: 0 !important; clear: both; }
+/* ────────────────────────────────────────────────────────────
+   10. LISTS, BUTTONS & FORMS
+   ──────────────────────────────────────────────────────────── */
+.listItem { border-radius: var(--r-card); transition: background .15s; }
+.listItem:hover { background: var(--surface) !important; }
+.listItemBodyText.secondary { color: var(--text-dim); }
+.listItemImage { border: 0; border-radius: var(--r-card); }
+.listItem-border { border-color: var(--line) !important; }
 
-/* Fix v3.3: GRIJS BEELD bij afspelen — achtergrond moet transparant zijn tijdens video,
-   anders ligt de gradient over de video heen */
-html body .backgroundContainer.backgroundContainer-transparent { background: transparent !important; }
-html body:has(.videoPlayerContainer:not(.hide)) { background: #000 !important; }
-#videoOsdPage, .videoOsdPage { animation: none !important; background: transparent !important; }
-
-/* ============================================================
-   v4 — HERO-DETAILPAGINA (ook voor ultrawide)
-   ============================================================ */
-/* body-achtergrond lag over de (fixed, z-index -1) achtergrondafbeelding heen → transparant */
-html body { background: transparent !important; }
-html { background: #141414 !important; }
-
-/* Achtergrond zichtbaar met Netflix-verloop: donker links (tekst) en onder */
-html body .backgroundContainer.withBackdrop {
-  opacity: 1 !important;
-  background:
-    linear-gradient(90deg, rgba(20,20,20,.97) 0%, rgba(20,20,20,.75) 30%, rgba(20,20,20,.15) 65%, transparent 100%),
-    linear-gradient(0deg, #141414 6%, rgba(20,20,20,.6) 40%, transparent 70%) !important;
+/* No Jellyfin blue left: accent buttons are red */
+.button-accent, .emby-button.button-accent,
+.MuiButton-containedPrimary, .MuiButton-root.MuiButton-containedPrimary {
+  background: var(--red) !important; color: #fff !important; border: 0 !important;
 }
+.button-accent:hover, .MuiButton-containedPrimary:hover { background: var(--red-hover) !important; }
+.button-accent-flat { background: transparent !important; color: var(--red) !important; border: 0 !important; }
 
-/* Losse thumbnail weg; alles links op één lijn met de rest van de pagina */
-.layout-desktop .detailImageContainer { display: none !important; }
-.layout-desktop .itemBackdrop { height: 38vh !important; }
-.layout-desktop .detailRibbon { padding-left: var(--pad) !important; margin-top: 0 !important; }
-.layout-desktop .detailPagePrimaryContent { padding-left: var(--pad) !important; }
-.layout-desktop .detailPageWrapperContainer { background: transparent !important; }
-.layout-desktop #itemDetailPage .detailSection { max-width: min(52em, 60vw) !important; }
-
-/* Logo linksonder in de hero, net boven de titel */
-.layout-desktop .detailLogo {
-  left: var(--pad) !important; right: auto !important; margin: 0 !important; transform: none !important;
-  top: calc(23vh - 1.5em) !important; width: min(30em, 36vw) !important; height: 15vh !important;
-  background-position: left bottom !important;
+.button-submit, .raised.button-submit {
+  background: var(--red) !important; color: #fff !important; border: 0 !important;
+  border-radius: var(--r-btn); font-weight: 600;
 }
+.button-submit:hover { background: var(--red-hover) !important; }
+.button-delete, .btnRevoke, #btnShutdown { background: #8b0000; border: 0; }
+.emby-button.block, .button-alt, .raised, .fab { background: var(--surface-2); color: #fff; border: 0; border-radius: var(--r-btn); }
+.emby-button:active { transform: scale(.98); }
+.button-flat:hover { background: rgba(255,255,255,.08); color: #fff; }
+.button-link { color: var(--text-dim); }
+.button-link:hover { color: #fff !important; text-decoration: underline; }
 
-/* Fix v4.1: labels van invoervelden worden niet meer blauw bij focus; dubbele lijn boven disclaimer weg */
+.emby-input, .emby-select, .emby-select-withcolor, .emby-textarea {
+  background: #333 !important; border: 1px solid transparent !important;
+  border-radius: var(--r-btn); color: #fff; padding: .7em .9em !important;
+}
+.emby-input:focus, .emby-select:focus, .emby-textarea:focus { border-color: #fff !important; outline: none !important; }
+.emby-select-withcolor > option { background: #222; }
+/* Field labels stay white on focus (not blue) */
 html body .inputLabelFocused, html body .selectLabelFocused, html body .textareaLabelFocused,
 html body .inputLabel-float.inputLabelFocused { color: #fff !important; }
+
+.emby-checkbox:checked + span + .checkboxOutline:not(.multiSelectCheckboxOutline) { background: var(--red); border-color: var(--red); }
+.emby-checkbox:checked + span + .checkboxOutline.multiSelectCheckboxOutline { border: 2px solid var(--red); border-radius: var(--r-card) !important; }
+.searchfields-txtSearch { border-radius: var(--r-btn); padding: .75em 1.2em !important; }
+
+/* Library toolbar & alphabet */
+.listTopPaging, .itemsViewSettingsContainer, .paging { gap: .3em; }
+.btnFilter, .btnSort, .btnSelectView { border-radius: 50%; }
+.btnFilter:hover, .btnSort:hover, .btnSelectView:hover { background: rgba(255,255,255,.1); }
+.alphaPickerButton { color: var(--text-faint); }
+.alphaPickerButton-selected { color: var(--red); font-weight: 700; }
+
+/* ────────────────────────────────────────────────────────────
+   11. PLAYER
+   ──────────────────────────────────────────────────────────── */
+.mdl-slider-background-lower, .iconOsdProgressInner { background: var(--red); }
+.mdl-slider::-webkit-slider-thumb { background: var(--red); }
+.mdl-slider::-moz-range-thumb { background: var(--red); }
+.mdl-slider-background-upper { background: rgba(255,255,255,.25); }
+progress::-webkit-progress-value { background: var(--red) !important; }
+progress::-moz-progress-bar { background: var(--red) !important; }
+.mdl-spinner__circle { border-color: var(--red); }
+.videoOsdBottom.videoOsdBottom-maincontrols { background: linear-gradient(0deg, rgba(0,0,0,.85), transparent); }
+.skinHeader-withBackground.osdHeader { background: linear-gradient(180deg, rgba(0,0,0,.85), transparent) !important; }
+.skip-button, #introSkipperButton, .skipIntroButton {
+  background: rgba(20,20,20,.85); color: #fff; border: 1px solid rgba(255,255,255,.6);
+  border-radius: var(--r-btn); font-weight: 600;
+}
+.skip-button:hover, #introSkipperButton:hover, .skipIntroButton:hover { background: #fff; color: #000; }
+.nowPlayingBar { background: rgba(10,10,10,.97) !important; border-top: 1px solid var(--line) !important; box-shadow: none !important; }
+
+/* ────────────────────────────────────────────────────────────
+   12. DIALOGS & MENUS
+   ──────────────────────────────────────────────────────────── */
+.dialog { background: var(--surface); border: 0; border-radius: var(--r-dialog) !important; }
+.dialogBackdropOpened { opacity: .75; }
+.actionSheetContent { padding: .4em !important; }
+.actionSheetMenuItem { border-radius: var(--r-btn); }
+.actionSheetMenuItem:has(.listItemIcon.check) { background: var(--surface-2); }
+.toast, .upNextContainer { background: var(--surface-2) !important; border: 0 !important; border-radius: var(--r-btn); }
+.infoBanner { background: var(--surface) !important; border: 0 !important; border-radius: var(--r-card) !important; }
+.MuiList-root.MuiMenu-list { background: var(--surface); }
+table:not(.MuiTable-root.MuiTable-stickyHeader) { background: var(--surface); border: 0; border-radius: var(--r-card); }
+fieldset { border: 1px solid var(--line); border-radius: var(--r-card); }
+
+/* ────────────────────────────────────────────────────────────
+   13. LOGIN PAGE & DISCLAIMER
+   ──────────────────────────────────────────────────────────── */
+.skinHeader.noHomeButtonHeader.semiTransparent { display: none; }
+#loginPage {
+  display: flex; justify-content: center; align-items: center;
+  min-height: 100vh; padding: 1.5em; box-sizing: border-box;
+  background:
+    linear-gradient(180deg, rgba(0,0,0,.75), rgba(0,0,0,.45) 40%, rgba(0,0,0,.9)),
+    radial-gradient(ellipse at 50% 0%, rgba(229,9,20,.18), transparent 60%),
+    #000 !important;
+}
+#loginPage .padded-left.padded-right.padded-bottom-page {
+  width: 26em; max-width: 100%;
+  padding: 3em 3em 2em !important;
+  box-sizing: border-box;
+  background: rgba(10,10,10,.72);
+  backdrop-filter: blur(18px);
+  border: 1px solid rgba(255,255,255,.08);
+  border-top: 2px solid var(--red);
+  border-radius: var(--r-dialog);
+  box-shadow: 0 30px 80px rgba(0,0,0,.7), 0 0 60px rgba(229,9,20,.12);
+}
+#loginPage .padded-left.padded-right.padded-bottom-page:has(.visualLoginForm:not(.hide)) { width: 40em; }
+
+.manualLoginForm .sectionTitle, .visualLoginForm > h1 { display: none; }
+.manualLoginForm, .visualLoginForm { position: relative; }
+.manualLoginForm::before, .visualLoginForm::before {
+  content: var(--loginPageText);
+  display: block;
+  font-size: 1.9rem; font-weight: 800; letter-spacing: -.01em; color: #fff;
+  margin-bottom: 1em;
+}
+#loginPage .emby-input { background: #333 !important; }
+#loginPage .emby-input:focus { box-shadow: 0 0 0 2px rgba(229,9,20,.5); border-color: transparent !important; }
+#loginPage .button-submit { width: 100%; padding: .9em !important; font-size: 1rem; }
+#divUsers .squareCard { width: 30% !important; }
+.layout-mobile #divUsers .squareCard { width: 45% !important; }
+#txtLoginDisclaimer { resize: none; }
+
+/* Disclaimer text comes from Dashboard → General → Branding → Login disclaimer */
+#loginPage .loginDisclaimer,
+#loginPage .loginDisclaimerContainer,
+#loginPage [class*="isclaimer"] {
+  margin-top: 1.6em;
+  padding-top: 1.2em;
+  border-top: 1px solid var(--line);
+  color: var(--text-faint);
+  font-size: .8rem;
+  line-height: 1.55;
+  text-align: left;
+}
 #loginPage [class*="isclaimer"] [class*="isclaimer"] { border-top: 0 !important; margin-top: 0 !important; padding-top: 0 !important; }
+#loginPage .loginDisclaimer a { color: var(--text-dim); text-decoration: underline; }
+#loginPage .loginDisclaimer a:hover { color: #fff; }
+#loginPage .loginDisclaimer strong { color: var(--text-dim); font-weight: 600; }
+
+/* ────────────────────────────────────────────────────────────
+   14. MOBILE
+   ──────────────────────────────────────────────────────────── */
+.layout-mobile .headerButton { width: 40px !important; height: 40px !important; min-width: 40px; margin: 0 2px !important; }
+.layout-mobile .headerButton .material-icons { font-size: 26px !important; }
+.layout-mobile .headerUserButton { width: 34px !important; height: 34px !important; }
+.layout-mobile .cardScalable { border-radius: 6px; }
+
+/* Home: tighter rows, smaller titles */
+.layout-mobile .verticalSection { margin-bottom: .4em; }
+.layout-mobile .sectionTitle, .layout-mobile h2.sectionTitle, .layout-mobile .sectionTitle-cards { font-size: 1.15rem !important; }
+
+/* Library: no alphabet bar on mobile; grid of 3 posters per row across the full width */
+.layout-mobile .alphaPicker, .layout-mobile .alphaPicker-fixed-right { display: none !important; }
+.layout-mobile .padded-right-withalphapicker { padding-right: var(--pad) !important; }
+.layout-mobile .vertical-wrap > .card { width: calc(100% / 3) !important; }
+
+/* Detail page: no floating thumbnail, everything left-aligned */
+.layout-mobile .detailImageContainer { display: none !important; }
+.layout-mobile .detailRibbon { display: block !important; padding: 0 var(--pad) !important; margin-top: 0 !important; }
+.layout-mobile .nameContainer > * { text-align: left !important; }
+.layout-mobile .nameContainer > h3.itemName.subtitle, .layout-mobile .nameContainer > .subtitle { font-size: 1.45em !important; }
+.layout-mobile .nameContainer > h1.itemName { font-size: 2em; }
+.layout-mobile .mainDetailButtons { margin-top: 1em !important; }
+.layout-mobile .btnPlay.detailButton { flex: 0 0 100%; margin-right: 0 !important; }
+.layout-mobile .detailPagePrimaryContent { padding-left: var(--pad) !important; padding-right: var(--pad) !important; }
+.layout-mobile .trackSelections .trackSelectionFieldContainer:not(.hide) { grid-template-columns: 1fr; gap: .3em; }
+.layout-mobile .trackSelections .selectArrowContainer { top: auto !important; bottom: .7em; transform: none; }
+.layout-mobile .itemDetailsGroup .detailsGroupItem { grid-template-columns: 7em 1fr; }
+
+/* ────────────────────────────────────────────────────────────
+   15. TV
+   ──────────────────────────────────────────────────────────── */
+.layout-tv .show-focus:focus, .layout-tv .show-animation:focus { transform: none !important; }
+.layout-tv .card:focus .cardScalable { outline: 3px solid #fff; }
