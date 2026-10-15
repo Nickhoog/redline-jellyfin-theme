@@ -1,5 +1,5 @@
 /* ============================================================
-   REDLINE — Jellyfin Theme · v1.0
+   REDLINE — Jellyfin Theme · v1.0.1
    Streaming look · black & red · clean
    Tested on Jellyfin 10.11 (web: desktop, ultrawide, mobile)
    https://github.com/Nickhoog/redline-jellyfin-theme · MIT
@@ -404,6 +404,9 @@ h2.sectionTitle.padded-left { display: inline-block !important; margin-left: var
 .itemMiscInfo .mediaInfoItem { color: #bcbcbc !important; margin: 0 !important; padding: 0 !important; }
 .itemMiscInfo .mediaInfoItem + .mediaInfoItem::before { content: "•"; color: #555; margin: 0 .55em; }
 .itemMiscInfo-secondary { margin-top: .25em; }
+/* Age rating badge: no dot inside the frame */
+.itemMiscInfo .mediaInfoItem.mediaInfoOfficialRating::before { content: none !important; }
+.itemMiscInfo .mediaInfoItem.mediaInfoOfficialRating { margin: 0 0 0 .55em !important; padding: .05em .4em !important; line-height: 1.3; }
 
 /* Buttons */
 .mainDetailButtons { justify-content: flex-start !important; align-items: center; gap: .6em; margin: 0 !important; padding: 0 !important; flex-wrap: wrap; }
@@ -439,7 +442,7 @@ h2.sectionTitle.padded-left { display: inline-block !important; margin-left: var
 /* Track selection (video / audio / subtitles) */
 .trackSelections {
   background: transparent !important; border: 0 !important; box-shadow: none !important; padding: 0 !important; margin: 1.2em 0 0 !important;
-  border-radius: var(--r-card); display: grid !important; gap: .45em; max-width: 34em;
+  border-radius: var(--r-card); display: grid !important; gap: .45em; max-width: 46em;
 }
 .trackSelections .trackSelectionFieldContainer:not(.hide) {
   display: grid !important; grid-template-columns: 8.5em 1fr; align-items: center; margin: 0 !important; max-width: none !important;
@@ -451,6 +454,7 @@ h2.sectionTitle.padded-left { display: inline-block !important; margin-left: var
 .trackSelections .detailTrackSelect {
   background: #232323 !important; border: 1px solid transparent !important; border-radius: 6px !important;
   padding: .6em .9em !important; font-size: .95em; color: #fff; min-height: 0 !important;
+  width: 100% !important; max-width: none !important; text-overflow: ellipsis;
 }
 .trackSelections .detailTrackSelect:disabled { background: transparent !important; padding-left: 0 !important; color: #d0d0d0; opacity: 1; }
 .trackSelections .detailTrackSelect:not(:disabled):hover { border-color: rgba(255,255,255,.3) !important; }
@@ -465,6 +469,15 @@ h2.sectionTitle.padded-left { display: inline-block !important; margin-left: var
   transition: background .15s, color .15s, border-color .15s;
 }
 .itemExternalLinks > a.button-link:hover { background: #fff !important; color: #000 !important; border-color: #fff; }
+
+/* Tags as small outline pills ("Tags:" label and commas disappear) */
+.itemTags { font-size: 0 !important; display: flex !important; flex-wrap: wrap; align-items: center; gap: .4rem; margin: 1.2em 0 .4em !important; }
+.itemTags > a.button-link {
+  font-size: .75rem !important; font-weight: 500; color: var(--text-dim) !important; text-decoration: none !important;
+  background: transparent; border: 1px solid rgba(255,255,255,.14); border-radius: 99px; padding: .25em .8em; margin: 0 !important;
+  transition: color .15s, border-color .15s;
+}
+.itemTags > a.button-link:hover { color: #fff !important; border-color: rgba(255,255,255,.5); }
 
 /* Director / Writers / Genres */
 .itemDetailsGroup {

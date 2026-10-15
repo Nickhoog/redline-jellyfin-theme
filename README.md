@@ -2,7 +2,7 @@
 
 A clean, streaming-style dark theme for Jellyfin. Black and red, with left-aligned layouts and quiet hover effects.
 
-**Version 1.0** · Tested on **Jellyfin 10.11** (web client: desktop, ultrawide, mobile and TV layout).
+**Version 1.0.1** · Tested on **Jellyfin 10.11** (web client: desktop, ultrawide, mobile and TV layout).
 
 ![Home](screenshots/home.webp)
 
@@ -36,10 +36,10 @@ A clean, streaming-style dark theme for Jellyfin. Black and red, with left-align
 1. Open **Dashboard → General → Branding**.
 2. Put one of these lines in **Custom CSS code**:
 
-   Stable version 1.0 (recommended, never changes unexpectedly):
+   Stable version 1.0.1 (recommended, never changes unexpectedly):
 
    ```css
-   @import url("https://cdn.jsdelivr.net/gh/Nickhoog/redline-jellyfin-theme@v1.0/redline.css");
+   @import url("https://cdn.jsdelivr.net/gh/Nickhoog/redline-jellyfin-theme@v1.0.1/redline.css");
    ```
 
    Always the latest version (auto-updates, the CDN can take up to a day to refresh):
@@ -77,6 +77,7 @@ All main colours live in `:root` at the top of `redline.css`:
 
 ## Changelog
 
+- **1.0.1** — fixes: dot inside the age rating badge, cut-off audio track name, styled tags as pills.
 - **1.0** — first stable release: cleaned-up CSS, mobile improvements, TV layout tested.
 
 ## License
