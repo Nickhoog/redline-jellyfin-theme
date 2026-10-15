@@ -1,5 +1,5 @@
 /* ============================================================
-   REDLINE — Jellyfin Theme · v1.1.0
+   REDLINE — Jellyfin Theme · v1.1.1
    Streaming look · black & red · clean
    Tested on Jellyfin 10.11 (web: desktop, ultrawide, mobile)
    https://github.com/Nickhoog/redline-jellyfin-theme · MIT
@@ -622,8 +622,10 @@ html body video.htmlvideoplayer::cue {
   background: transparent !important;
   text-shadow: 0 0 2px #000, 0 0 2px #000, 0 2px 4px rgba(0,0,0,.9), 0 0 14px rgba(0,0,0,.55) !important;
 }
-/* Position: a little higher than default, so lines stay clear of the control bar (Chromium-based browsers) */
-html body video.htmlvideoplayer::-webkit-media-text-track-container { bottom: 4.5vh !important; }
+/* Position (Chromium-based browsers): low in the picture while watching, higher while the controls are visible.
+   Browsers only re-position on the next subtitle line, so a line already on screen stays put. */
+html body video.htmlvideoplayer::-webkit-media-text-track-container { bottom: -4vh !important; }
+html body:not(.mouseIdle) video.htmlvideoplayer::-webkit-media-text-track-container { bottom: 4.5vh !important; }
 
 /* Low screens (phone in landscape): compact controls, subtitles a bit higher */
 @media (max-height: 520px) {
@@ -633,12 +635,14 @@ html body video.htmlvideoplayer::-webkit-media-text-track-container { bottom: 4.
   .videoOsdBottom .osdTextContainer, .videoOsdBottom .osdTimeText { font-size: .78rem; }
   .osdHeader .pageTitle { font-size: .95rem !important; }
   .videoOsdBottom .osdVolumeSliderContainer { width: 4.5em; }
-  html body video.htmlvideoplayer::-webkit-media-text-track-container { bottom: 11vh !important; }
+  html body video.htmlvideoplayer::-webkit-media-text-track-container { bottom: -2vh !important; }
+  html body:not(.mouseIdle) video.htmlvideoplayer::-webkit-media-text-track-container { bottom: 11vh !important; }
 }
 
 /* Phone held upright: the 16:9 picture sits in the middle, show subtitles just below it */
 @media (orientation: portrait) and (max-aspect-ratio: 3/4) {
-  html body video.htmlvideoplayer::-webkit-media-text-track-container { bottom: calc(50vh - 28.125vw - 4.4em) !important; }
+  html body video.htmlvideoplayer::-webkit-media-text-track-container,
+  html body:not(.mouseIdle) video.htmlvideoplayer::-webkit-media-text-track-container { bottom: calc(50vh - 28.125vw - 4.4em) !important; }
 }
 
 /* Skip intro / credits */
